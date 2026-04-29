@@ -53,6 +53,7 @@ namespace ProcessingModule
 			acquisitionWorker.Start();
 		}
 
+        //Indeks: PR 17/2023
         /// <summary>
         /// Acquisitor thread logic.
         /// </summary>
