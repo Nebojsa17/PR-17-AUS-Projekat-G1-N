@@ -1,9 +1,9 @@
 STA 8
 TCP 43618
 
-IN_REG  1  2300  0  0   2000  1000  AI  @L   		3
-DO_REG  1  2700  0  0      1     0  DO  @STOP		2
-DO_REG  1  2702  0  0      1     0  DO  @VENTIL_V1	2
-DO_REG  1  2705  0  0      1     0  DO  @P1			2
-DO_REG  1  2706  0  0      1     0  DO  @P2			2
-HR_INT  1  1300  0  0   2000  1000  AO  @N1   		3
+IN_REG  1  2300  0  0   2000  1000  AI  @L   		1	#		#	
+DO_REG  1  2700  0  0      1     0  DO  @STOP		1	#		#
+DO_REG  1  2702  0  0      1     0  DO  @VENTIL_V1	1	#		#
+DO_REG  1  2705  0  0      1     0  DO  @P1			1	#		#
+DO_REG  1  2706  0  0      1     0  DO  @P2			1	#		#
+HR_INT  1  1300  0  0   2000  1000  AO  @N1   		1	1100	900

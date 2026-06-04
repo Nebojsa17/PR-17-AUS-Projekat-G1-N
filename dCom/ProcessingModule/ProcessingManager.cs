@@ -44,6 +44,7 @@ namespace ProcessingModule
         {
             if (configItem.RegistryType == PointType.ANALOG_OUTPUT)
             {
+                value = eguConverter.ConvertToRaw(1, 0, value);
                 ExecuteAnalogCommand(configItem, transactionId, remoteUnitAddress, pointAddress, value);
             }
             else
@@ -130,7 +131,7 @@ namespace ProcessingModule
             point.RawValue = newValue;
             point.Timestamp = DateTime.Now;
             point.State = (DState)newValue;
-
+            /**/point.Alarm = alarmProcessor.GetAlarmForDigitalPoint(newValue, point.ConfigItem);
         }
 
         /// <summary>
@@ -142,6 +143,8 @@ namespace ProcessingModule
         {
             point.RawValue = newValue;
             point.Timestamp = DateTime.Now;
+            /**/point.Alarm = alarmProcessor.GetAlarmForAnalogPoint(point.EguValue, point.ConfigItem);
+            /**/point.EguValue = eguConverter.ConvertToEGU(1, 0, newValue);
         }
 
         /// <inheritdoc />

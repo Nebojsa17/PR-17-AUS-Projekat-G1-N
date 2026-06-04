@@ -294,6 +294,26 @@ namespace dCom.Configuration
                 Int32.TryParse(configurationParameters[9], out temp);
                 AcquisitionInterval = temp;
             }
+
+			if (configurationParameters[11].Equals("#"))
+			{
+				lowLimit = minValue;
+			}
+			else
+			{
+				Int32.TryParse(configurationParameters[11], out temp);
+				lowLimit = temp;
+			}
+
+            if (configurationParameters[10].Equals("#"))
+            {
+                highLimit = maxValue;
+            }
+            else
+            {
+                Int32.TryParse(configurationParameters[10], out temp);
+                highLimit = temp;
+            }
         }
 
 		private PointType GetRegistryType(string registryTypeName)

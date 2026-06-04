@@ -1,5 +1,7 @@
 ﻿using Common;
 using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 
 namespace ProcessingModule
@@ -60,10 +62,58 @@ namespace ProcessingModule
 
 		private void AutomationWorker_DoWork()
 		{
-			//while (!disposedValue)
-			//{
-			//}
-		}
+			const int STEP = 10;
+
+			PointIdentifier l = new PointIdentifier(PointType.ANALOG_INPUT,2300);
+            PointIdentifier stop = new PointIdentifier(PointType.DIGITAL_OUTPUT,2700);
+            PointIdentifier ventil = new PointIdentifier(PointType.DIGITAL_OUTPUT, 2702);
+            PointIdentifier p1 = new PointIdentifier(PointType.DIGITAL_OUTPUT, 2705);
+            PointIdentifier p2 = new PointIdentifier(PointType.DIGITAL_OUTPUT, 2706);
+            PointIdentifier n1 = new PointIdentifier(PointType.ANALOG_OUTPUT, 1300);
+
+            List<PointIdentifier> pointList = new List<PointIdentifier> { l, stop, ventil, p1, p2, n1 };
+            EGUConverter eguConverter = new EGUConverter();
+            double trenutniPolozajKapijeEGU = 0;
+
+			while (!disposedValue) 
+			{
+				automationTrigger.WaitOne();
+
+                List<IPoint> points = storage.GetPoints(pointList);
+                int pomeraj = 0;
+
+				if (points[3].RawValue == 1) 
+				{
+					pomeraj += STEP;
+				}
+
+				if (points[4].RawValue == 1) 
+				{
+					pomeraj -= STEP;
+				}
+
+				trenutniPolozajKapijeEGU = eguConverter.ConvertToEGU(1, 0, points[5].RawValue);
+
+				processingManager.ExecuteWriteCommand(
+						points[5].ConfigItem, 
+						configuration.GetTransactionId(), 
+						configuration.UnitAddress, 1300, 
+						(int)(trenutniPolozajKapijeEGU + pomeraj));
+
+                trenutniPolozajKapijeEGU = eguConverter.ConvertToEGU(1, 0, points[5].RawValue);
+
+				if (trenutniPolozajKapijeEGU > points[5].ConfigItem.HighLimit) 
+				{
+					processingManager.ExecuteWriteCommand(
+						points[3].ConfigItem, configuration.GetTransactionId(), configuration.UnitAddress, 2705, 0);
+
+				}else if (trenutniPolozajKapijeEGU < points[5].ConfigItem.LowLimit)
+				{
+					processingManager.ExecuteWriteCommand(
+						points[4].ConfigItem, configuration.GetTransactionId(), configuration.UnitAddress, 2706, 0);
+				}
+            }
+        }
 
 		#region IDisposable Support
 		private bool disposedValue = false; // To detect redundant calls
